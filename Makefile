@@ -1,7 +1,7 @@
 all : up
 
 up :
-	@docker-compose up -f ./srcs/docker-compose.yml up -d --build
+	@docker-compose -f ./srcs/docker-compose.yml up -d --build
 	@echo -e "\033[32mAll containers have been built and started.\033[0m"
 
 down :
