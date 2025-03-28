@@ -24,4 +24,6 @@ RUN chown -R www-data:www-data /var/www/html/
 COPY ./conf/nginx.conf /etc/nginx/conf.d/nginx.conf
 COPY ./tools/nginx.sh /usr/local/bin/
 
+RUN chmod +x /usr/local/bin/nginx.sh
+
 CMD ["/usr/local/bin/nginx.sh"]
