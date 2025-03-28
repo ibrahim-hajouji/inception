@@ -11,6 +11,8 @@ RUN apt -y install wget \
                 # mariadb-server is a MySQL database server
 COPY    ./tools/wordpress.sh /usr/local/bin/
 
+RUN chmod +x /usr/local/bin/wordpress.sh
+
 ENTRYPOINT [ "/usr/local/bin/wordpress.sh" ]
 
 CMD ["php-fpm7.3", "-F"]
