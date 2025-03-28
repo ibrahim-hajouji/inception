@@ -5,7 +5,7 @@ RUN apt -y install wget \
                 vim \ 
                 php-fpm \
                 php-mysql \
-                mariadb-server \
+                mariadb-server
                 # php-fpm is a FastCGI process manager for PHP which means it will handle PHP requests
                 # php-mysql is a MySQL module for PHP which allows PHP to communicate with MySQL databases
                 # mariadb-server is a MySQL database server
