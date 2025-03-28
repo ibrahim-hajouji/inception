@@ -4,7 +4,7 @@ FROM debian:buster
 RUN apt -y update && apt -y upgrade
 RUN apt -y install mariadb-server \
         vim \
-        procps \
+        procps
         #procps is a package that provides command line tools for viewing information about system utilization we need it for the ps command
 COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 # this command will copy the 50-server.cnf file from the conf folder to the /etc/mysql/mariadb.conf.d/50-server.cnf path in the container
