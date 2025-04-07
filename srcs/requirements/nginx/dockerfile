@@ -1,0 +1,29 @@
+FROM debian:buster
+
+RUN apt -y update && apt -y upgrade
+RUN apt -y install  nginx \
+                    openssl \
+                    procps \
+                    vim
+# openssl is required for generating SSL certificates for HTTPS (so we can serve websites securely)
+
+RUN mkdir -p /etc/nginx/snippets/
+# this is where reusable nginx config snippets will be stored (snippets are reusable parts of nginx config) meaning we will store there anything that we want to reuse in multiple nginx config files
+
+RUN mkdir -p /var/run/nginx/
+# this is where nginx will store its pid file (a file that contains the process id of the nginx process)
+
+RUN mkdir -p /var/www/html/wordpress
+RUN chmod 755 -R /var/www/html/wordpress
+# this is where the wordpress files will be stored and we make sure that the permissions are correct for nginx
+
+RUN chown -R www-data:www-data /var/www/html/
+# we change the ownership of /var/www/html to www-data (the user that nginx runs as) so that nginx can read and write to the directory
+# www-data:www-data <=> user:group
+
+COPY ./conf/nginx.conf /etc/nginx/conf.d/nginx.conf
+COPY ./tools/nginx.sh /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/nginx.sh
+
+CMD ["/usr/local/bin/nginx.sh"]

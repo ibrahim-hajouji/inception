@@ -1,0 +1,86 @@
+version: '3.8' # version of the docker-compose file
+
+networks:
+  inception:
+    name: $NETWORK_NAME # the name of the network
+    driver: bridge # this mode creates a private internal network that is only accessible by the containers that are connected to it
+
+
+volumes:
+  mariadb:
+    name: mariadb # the name of the volume
+    driver_opts: # allows customization of the volume storage
+      type: none # the volume will be stored on the host machine
+      o: bind # we're binding (linking) the volume to a directory on the host machine
+      device: $MARIADB_VOLUME_PATH # the path to the directory on the host machine
+    
+  wordpress:
+    name: wordpress
+    driver_opts:
+      type: none
+      o: bind
+      device: $WORDPRESS_VOLUME_PATH
+
+services: # define the services (containers) that will be created
+  
+  nginx:
+    expose:
+      - $NGINX_PORT
+    container_name: nginx
+    image: nginx:1337
+    restart: on-failure
+    env_file:
+      - .env
+    tty: true
+    stdin_open: true
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - $NETWORK_NAME
+    ports:
+      - $NGINX_PORT:443
+    build:
+      context: ./requirements/nginx
+    depends_on: # wait for wordpress to start before starting the nginx container
+      - wordpress
+
+  mariadb: # service name
+    expose: # make the port available to other containers in the same network
+      - $MARIADB_PORT
+    container_name: mariadb
+    image: mariadb:1337 # image name and tag (image tells docker to tag ur custom image with a name, in his case mariadb and a tag)
+    restart: on-failure # restart the container if it fails because of a crash
+    env_file: #load environment variables from a file
+      - .env
+    tty: true # create a terminal for the container
+    stdin_open: true # keep the stdin of the container open to be able to interact with it
+    volumes: # it will create a volume to store the database data in the host machine
+      - mariadb:/var/lib/mysql
+    networks: # connect the container to the network
+      - $NETWORK_NAME
+    ports: # use the port 3306 of the host machine to access the container meaning every request to the host machine on port 3306 will be redirected to the container
+      - $MARIADB_PORT:3306
+    build: # tells docker to build the image from the Dockerfile
+      context: ./requirements/mariadb # path to the Dockerfile
+
+  wordpress:
+    expose:
+      - $WORDPRESS_PORT
+    container_name: wordpress
+    image: wordpress:1337
+    restart: on-failure
+    env_file:
+      - .env
+    tty: true
+    stdin_open: true
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - $NETWORK_NAME
+    ports:
+      - $WORDPRESS_PORT:9000
+    build:
+      context: ./requirements/wordpress
+    depends_on:
+      - mariadb
+    

@@ -1,0 +1,19 @@
+FROM debian:buster
+
+RUN apt -y update && apt -y upgrade
+RUN apt -y install wget \
+                vim \ 
+                php-fpm \
+                php-mysql \
+                mariadb-server
+                # php-fpm is a FastCGI process manager for PHP which means it will handle PHP requests
+                # php-mysql is a MySQL module for PHP which allows PHP to communicate with MySQL databases
+                # mariadb-server is a MySQL database server
+COPY    ./tools/wordpress.sh /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/wordpress.sh
+
+ENTRYPOINT [ "/usr/local/bin/wordpress.sh" ]
+
+CMD ["php-fpm7.3", "-F"]
+# php-fpm7.3 is the PHP FastCGI Process Manager for PHP 7.3 and -F is to run in foreground mode which means it will not daemonize (run in the background)
