@@ -49,7 +49,7 @@ Replace the values with your own.
 
 🚀 How to Run
 ```
-git clone https://github.com/ibrahim-hajouji/inception.git
+git clone git@github.com:ibrahim-hajouji/inception.git
 ```
 ```
 cd inception
